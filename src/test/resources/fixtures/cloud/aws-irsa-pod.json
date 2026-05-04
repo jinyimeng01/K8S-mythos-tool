@@ -1,0 +1,28 @@
+{
+  "items": [{
+    "metadata": {
+      "name": "api",
+      "namespace": "prod"
+    },
+    "spec": {
+      "containers": [{
+        "name": "api",
+        "env": [{
+          "name": "AWS_SESSION_TOKEN",
+          "value": "live-aws-session-token"
+        }]
+      }],
+      "volumes": [{
+        "name": "aws-token",
+        "projected": {
+          "sources": [{
+            "serviceAccountToken": {
+              "audience": "sts.amazonaws.com",
+              "path": "token"
+            }
+          }]
+        }
+      }]
+    }
+  }]
+}

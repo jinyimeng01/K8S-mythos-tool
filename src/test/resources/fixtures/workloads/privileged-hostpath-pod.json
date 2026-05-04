@@ -1,0 +1,27 @@
+{
+  "items": [{
+    "metadata": {
+      "name": "node-toolbox",
+      "namespace": "prod"
+    },
+    "spec": {
+      "hostNetwork": true,
+      "hostPID": true,
+      "volumes": [{
+        "name": "host-root",
+        "hostPath": {
+          "path": "/"
+        }
+      }],
+      "containers": [{
+        "name": "toolbox",
+        "securityContext": {
+          "privileged": true,
+          "capabilities": {
+            "add": ["SYS_ADMIN"]
+          }
+        }
+      }]
+    }
+  }]
+}

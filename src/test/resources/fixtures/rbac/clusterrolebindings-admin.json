@@ -1,0 +1,16 @@
+{
+  "items": [{
+    "metadata": {
+      "name": "prod-admin"
+    },
+    "roleRef": {
+      "kind": "ClusterRole",
+      "name": "cluster-admin"
+    },
+    "subjects": [{
+      "kind": "ServiceAccount",
+      "name": "default",
+      "namespace": "prod"
+    }]
+  }]
+}

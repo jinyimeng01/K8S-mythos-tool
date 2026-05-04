@@ -1,0 +1,1 @@
+src/main/resources/kubectl.exe filter=lfs diff=lfs merge=lfs -text

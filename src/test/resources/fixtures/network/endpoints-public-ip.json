@@ -1,0 +1,13 @@
+{
+  "items": [{
+    "metadata": {
+      "name": "external-db",
+      "namespace": "prod"
+    },
+    "subsets": [{
+      "addresses": [{
+        "ip": "8.8.8.8"
+      }]
+    }]
+  }]
+}
